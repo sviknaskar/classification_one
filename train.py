@@ -42,21 +42,22 @@ def train(model, trainDataLoader, valDataLoader, optimizer, criterion, config):
                 optimizer.step()
                 bar.update()
         trainingLoss.append(runTrainLoss / dataLen)
-        
-        valDataLen = len(valDataLoader)
-        if valDataLen > 0:
-            model.eval()
 
-            with torch.no_grad():
-                with tqdm(total = dataLen) as bar:
-                    for i,l in valDataLoader:
-                        img = i.to(config.DEVICE_TYPE)
-                        lbl = i.to(config.DEVICE_TYPE)
-                        pred = model(img)
-                        loss = criterion(pred, lbl)
-                        runValLoss += loss.item()
-                        bar.update()
-            valLoss.append(runValLoss / valDataLen)
+        if valDataLoader is not None:
+            valDataLen = len(valDataLoader)
+            if valDataLen > 0:
+                model.eval()
+
+                with torch.no_grad():
+                    with tqdm(total = dataLen) as bar:
+                        for i,l in valDataLoader:
+                            img = i.to(config.DEVICE_TYPE)
+                            lbl = i.to(config.DEVICE_TYPE)
+                            pred = model(img)
+                            loss = criterion(pred, lbl)
+                            runValLoss += loss.item()
+                            bar.update()
+                valLoss.append(runValLoss / valDataLen)
 
 
 
